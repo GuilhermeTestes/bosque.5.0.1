@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Árvores de Gabriel Monteiro</title>
+
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Bitter:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&display=swap");
+
+:root {
+  --paper: #f4f5ee;
+  --card: #ffffff;
+  --wash: #e8ede0;
+  --ink: #1f2a1c;
+  --muted: #55614f;
+  --leaf: #2f6b34;
+  --leaf-dark: #234f27;
+  --bark: #33261c;
+  --ipe: #f2b705;
+  --line: #d3dac4;
+  --head: "Bitter", Georgia, serif;
+  --body: "Source Sans 3", Arial, Helvetica, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 1.05rem;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+h1, h2, h3 { font-family: var(--head); }
+
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 3px solid var(--ipe);
+  outline-offset: 2px;
+}
+
+/* LOGIN */
+
+#login-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  overflow-y: auto;
+  background:
+    linear-gradient(rgba(33,26,19,.74), rgba(33,26,19,.74)),
+    url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1800&q=85")
+    center / cover;
+  transition: opacity .85s ease, visibility .85s ease;
+}
+
+#login-screen::before,
+#login-screen::after { display: none; }
+
+#login-screen.login-leaving {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#login-screen.login-hidden { display: none; }
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 450px;
+  margin: auto;
+  padding: 30px;
+  border-top: 6px solid var(--ipe);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 18px 50px rgba(0,0,0,.4);
+}
+
+.login-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--wash);
+  font-size: 2rem;
+}
+
+.login-eyebrow {
+  margin: 0 0 8px;
+  color: var(--leaf);
+  font-size: .95rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.login-card h1 {
+  margin: 0;
+  color: var(--bark);
+  font-size: clamp(1.7rem,5vw,2.1rem);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.login-intro {
+  margin: 14px 0 24px;
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.login-field { margin-bottom: 16px; }
+
+.login-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #b9c4a8;
+  border-radius: 4px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.login-field input::placeholder { color: #8a9482; }
+
+.login-field input:focus { border-color: var(--leaf); }
+
+.login-button {
+  width: 100%;
+  margin-top: 6px;
+  padding: 14px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--leaf);
+  color: #fff;
+  font-weight: 700;
+  transition: background .2s;
+}
+
+.login-button:hover { background: var(--leaf-dark); }
+
+.login-button:disabled {
+  opacity: .7;
+  cursor: wait;
+}
+
+.login-note {
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: .85rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.login-legal {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: #6b7564;
+  font-size: .78rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.login-legal p { margin: 0 0 6px; }
+.login-legal p:first-child { color: var(--muted); font-weight: 600; }
+.login-legal p:last-child { margin: 0; }
+
+.login-error {
+  display: none;
+  margin-top: 13px;
+  padding: 11px;
+  border: 1px solid #d98a8a;
+  border-radius: 4px;
+  background: #fbeaea;
+  color: #7a1f1f;
+  font-size: .9rem;
+}
+
+.login-error.show { display: block; }
+
+/* TERMOS DE USO */
+
+#terms-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background:
+    linear-gradient(rgba(33,26,19,.8), rgba(33,26,19,.8)),
+    url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1800&q=85")
+    center / cover;
+  transition: opacity .7s ease, visibility .7s ease;
+}
+
+#terms-screen.terms-leaving { opacity: 0; visibility: hidden; pointer-events: none; }
+#terms-screen.terms-hidden { display: none; }
+
+.terms-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 780px;
+  max-height: calc(100vh - 36px);
+  max-height: calc(100dvh - 36px);
+  border-top: 6px solid var(--ipe);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 18px 50px rgba(0,0,0,.4);
+}
+
+.terms-head { padding: 24px 28px 14px; border-bottom: 1px solid var(--line); }
+.terms-head h1 { margin: 0 0 6px; color: var(--bark); font-size: clamp(1.4rem,4vw,1.9rem); line-height: 1.2; }
+.terms-head p { margin: 0; color: var(--muted); font-size: .98rem; line-height: 1.5; }
+
+.terms-body {
+  flex: 1 1 auto;
+  min-height: 140px;
+  overflow-y: auto;
+  padding: 18px 28px 24px;
+  background: #fff;
+  font-size: .98rem;
+  line-height: 1.7;
+}
+
+.terms-body h2 { margin: 22px 0 6px; color: var(--leaf-dark); font-size: 1.1rem; }
+.terms-body h2:first-child { margin-top: 0; }
+.terms-body p { margin: 0 0 10px; color: #3b4637; }
+.terms-body .terms-end { margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--bark); }
+
+.terms-footer { padding: 14px 28px 20px; border-top: 1px solid var(--line); }
+.terms-hint { margin: 0 0 10px; color: var(--muted); font-size: .88rem; }
+.terms-hint.ready { color: var(--leaf-dark); font-weight: 700; }
+
+.terms-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 9px;
+  font-size: .98rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.terms-check input { flex: none; width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--leaf); cursor: pointer; }
+.terms-check:has(input:disabled) { opacity: .5; cursor: not-allowed; }
+.terms-check input:disabled { cursor: not-allowed; }
+
+.terms-button {
+  width: 100%;
+  margin-top: 6px;
+  padding: 14px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--leaf);
+  color: #fff;
+  font-weight: 700;
+  transition: background .2s, opacity .2s;
+}
+
+.terms-button:not(:disabled):hover { background: var(--leaf-dark); }
+.terms-button:disabled { opacity: .45; cursor: not-allowed; }
+
+@media (max-width: 650px) {
+  .terms-head { padding: 18px 18px 12px; }
+  .terms-body { padding: 16px 18px 20px; }
+  .terms-footer { padding: 12px 18px 16px; }
+}
+
+/* CRÉDITOS E BOAS-VINDAS */
+
+#welcome-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px clamp(20px,6vw,72px);
+  overflow-y: auto;
+  background:
+    linear-gradient(rgba(33,26,19,.84), rgba(33,26,19,.84)),
+    url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1800&q=85")
+    center / cover;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .75s ease, visibility .75s ease;
+}
+
+#welcome-screen.welcome-visible { opacity: 1; visibility: visible; pointer-events: auto; }
+#welcome-screen.welcome-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.welcome-content { width: 100%; max-width: 980px; margin: auto; text-align: left; }
+
+.welcome-label {
+  display: block;
+  margin-bottom: 14px;
+  padding: 0;
+  border: 0;
+  color: var(--ipe);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.welcome-content > h2 {
+  margin: 0;
+  max-width: 760px;
+  color: #fff;
+  font-size: clamp(2.2rem,6vw,4.6rem);
+  line-height: 1.05;
+}
+
+.welcome-description {
+  max-width: 560px;
+  margin: 18px 0 30px;
+  color: #e8e4d6;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.credits-panel {
+  margin: 0 0 26px;
+  padding: 22px 0 0;
+  border-top: 1px solid rgba(255,255,255,.3);
+  background: none;
+  color: #fff;
+  text-align: left;
+}
+
+.credits-heading { margin: 0 0 16px; color: #fff; font-size: 1.15rem; text-align: left; }
+
+.main-credits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(210px,1fr));
+  gap: 18px 28px;
+}
+
+.credit-item {
+  padding: 0 0 0 14px;
+  border: 0;
+  border-left: 2px solid rgba(255,255,255,.3);
+}
+
+.credit-item:first-child {
+  grid-column: 1 / -1;
+  padding: 2px 0 2px 16px;
+  border-left: 4px solid var(--ipe);
+  background: none;
+}
+
+.credit-role { display: block; margin-bottom: 2px; color: var(--ipe); font-size: .9rem; font-weight: 700; }
+.credit-name { display: block; color: #fff; font-size: 1.05rem; font-weight: 700; line-height: 1.35; }
+.credit-detail { display: block; margin-top: 3px; color: #d8d3c4; font-size: .92rem; line-height: 1.5; }
+
+.special-heading { margin: 26px 0 10px; color: #fff; font-size: 1rem; text-align: left; }
+.special-people { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 6px 18px; }
+.special-person { padding: 0; border: 0; background: none; color: #f0ecde; font-size: .98rem; }
+.special-person small { color: var(--ipe); font-size: .75rem; font-weight: 700; }
+
+.welcome-continue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+  margin: 0;
+  padding: 15px 28px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ipe);
+  color: #2b2100;
+  font-weight: 700;
+  transition: background .2s, opacity .2s;
+}
+
+.welcome-continue:not(:disabled):hover { background: #ffd04a; }
+.welcome-continue:disabled { opacity: .65; cursor: wait; }
+.countdown-note { min-height: 20px; margin: 10px 0 0; color: #e8e4d6; font-size: .9rem; }
+
+/* SITE PRINCIPAL */
+
+html { scroll-padding-top: 56px; }
+
+#main-site {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  transition: opacity .6s ease, visibility .6s ease;
+}
+
+#main-site.site-ready { visibility: visible; opacity: 1; pointer-events: auto; }
+
+.site-header {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  min-height: 78vh;
+  padding: 80px clamp(20px,6vw,72px) 56px;
+  background: var(--bark);
+  text-align: left;
+}
+
+.site-header-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  width: max(100%, 177.78vh);
+  height: max(100%, 56.25vw);
+  border: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(33,26,19,.92), rgba(33,26,19,.3) 75%);
+  pointer-events: none;
+}
+
+.site-header h1, .site-header p { position: relative; z-index: 2; }
+
+.site-header h1 {
+  margin: 0;
+  max-width: 900px;
+  color: #fff;
+  font-size: clamp(2.4rem,8vw,6rem);
+  line-height: 1.02;
+}
+
+.site-header p {
+  max-width: 560px;
+  margin: 20px 0 0;
+  color: #f0ecde;
+  font-size: 1.15rem;
+  line-height: 1.7;
+}
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 0 26px;
+  padding: 0 clamp(20px,6vw,72px);
+  background: var(--bark);
+  border-bottom: 0;
+}
+
+.site-nav a {
+  padding: 15px 0 12px;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  color: #f0ecde;
+  text-decoration: none;
+  font-weight: 600;
+  transition: border-color .2s, color .2s;
+}
+
+.site-nav a:hover { border-bottom-color: var(--ipe); color: #fff; }
+
+.section { max-width: 1150px; margin: 0 auto; padding: 72px clamp(20px,5vw,40px); }
+
+.section h2 {
+  margin: 0 0 14px;
+  color: var(--bark);
+  font-size: clamp(1.8rem,4.5vw,2.8rem);
+  line-height: 1.15;
+}
+
+.section-intro { max-width: 640px; margin: 0 0 38px; color: var(--muted); font-size: 1.08rem; line-height: 1.75; }
+
+/* ÁRVORES: linhas com foto ao lado */
+
+.tree-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,420px),1fr));
+  gap: 30px 36px;
+}
+
+.tree-card {
+  display: grid;
+  grid-template-columns: 38% 1fr;
+  padding-top: 18px;
+  border: 0;
+  border-top: 2px solid var(--bark);
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+}
+
+.tree-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 190px;
+  object-fit: cover;
+  background: var(--wash);
+}
+
+.tree-card-content { padding: 0 0 0 20px; }
+.tree-card h3 { margin: 0 0 8px; color: var(--bark); font-size: 1.3rem; line-height: 1.25; }
+.tree-card p { margin: 0 0 12px; color: var(--muted); font-size: 1rem; line-height: 1.6; }
+
+.tree-card button {
+  margin: 0;
+  padding: 0 0 2px;
+  border: 0;
+  border-bottom: 2px solid var(--ipe);
+  border-radius: 0;
+  background: none;
+  color: var(--leaf-dark);
+  font-weight: 700;
+  transition: border-color .2s;
+}
+
+.tree-card button:hover { border-bottom-color: var(--leaf); background: none; }
+
+/* FAIXAS DE COR */
+
+.soft-section { background: var(--wash); border: 0; }
+.soft-section .section { padding-top: 72px; padding-bottom: 72px; }
+
+.soft-section:has(#especies) { background: var(--leaf-dark); }
+.soft-section:has(#especies) h2,
+.soft-section:has(#especies) .info-box strong { color: #fff; }
+.soft-section:has(#especies) .section-intro,
+.soft-section:has(#especies) .info-box p { color: #dfe9d6; }
+.soft-section:has(#especies) .info-box { border-top-color: var(--ipe); }
+
+.soft-section:has(#pesquisa) { background: var(--ipe); }
+.soft-section:has(#pesquisa) h2 { color: #2b2100; }
+.soft-section:has(#pesquisa) .section-intro { color: #3d3000; }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 28px 36px;
+  margin-top: 30px;
+}
+
+.info-box {
+  padding: 16px 0 0;
+  border: 0;
+  border-top: 3px solid var(--leaf);
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+}
+
+.info-box strong { display: block; margin-bottom: 8px; color: var(--bark); font-family: var(--head); font-size: 1.2rem; }
+.info-box p { margin: 0; color: var(--muted); line-height: 1.65; }
+
+/* PESQUISA */
+
+.poll-box {
+  max-width: 680px;
+  margin-top: 25px;
+  padding: 28px;
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 8px 8px 0 var(--bark);
+}
+
+.poll-box h3 { margin-top: 0; color: var(--bark); font-size: 1.35rem; }
+.poll-options { display: grid; gap: 10px; margin-top: 20px; }
+
+.poll-options button {
+  padding: 14px 16px;
+  border: 2px solid var(--bark);
+  border-radius: 0;
+  background: #fff;
+  color: var(--bark);
+  font-weight: 700;
+  text-align: left;
+  transition: background .2s, color .2s;
+}
+
+.poll-options button:hover { background: var(--bark); color: #fff; }
+
+#poll-thanks {
+  display: none;
+  margin-top: 20px;
+  padding: 16px;
+  border-left: 5px solid var(--leaf);
+  background: var(--wash);
+  color: var(--leaf-dark);
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+/* SOBRE O PROJETO */
+
+.video-placeholder {
+  display: flex;
+  min-height: 320px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 36px;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(33,26,19,.6), rgba(33,26,19,.6)),
+    url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80")
+    center / cover;
+  color: #fff;
+  font-family: var(--head);
+  font-size: 1.4rem;
+  text-align: left;
+}
+
+.video-placeholder p { max-width: 560px; margin: 0; line-height: 1.6; }
+
+.qr-notice {
+  padding: 16px 18px;
+  border: 0;
+  border-left: 5px solid var(--ipe);
+  border-radius: 0;
+  background: #fff6d6;
+  color: #4a3a05;
+  line-height: 1.7;
+}
+
+.site-footer {
+  padding: 40px clamp(20px,6vw,72px);
+  background: var(--bark);
+  color: #e8e1d3;
+  text-align: left;
+  line-height: 1.8;
+}
+
+.site-footer p { margin: 0; }
+.site-footer strong { color: var(--ipe); }
+
+.discord-link {
+  display: inline-block;
+  padding: 11px 20px;
+  border-radius: 4px;
+  background: var(--bark);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .2s;
+}
+
+.discord-link:hover { background: var(--leaf-dark); }
+
+.site-footer .discord-link { margin-top: 10px; background: var(--ipe); color: #2b2100; }
+.site-footer .discord-link:hover { background: #ffd04a; }
+
+/* MODAL */
+
+.tree-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(33,26,19,.75);
+}
+
+.tree-modal.open {
+  display: flex;
+  animation: fadeIn .2s ease;
+}
+
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 550px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 30px;
+  border-top: 6px solid var(--ipe);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 18px 50px rgba(0,0,0,.4);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  padding-right: 40px;
+  color: var(--bark);
+}
+
+.modal-content p {
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--wash);
+  color: var(--bark);
+  font-size: 1.4rem;
+}
+
+.modal-close:hover { background: var(--line); }
+
+/* ANIMAÇÕES */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 650px) {
+  #welcome-screen { padding: 22px 15px; }
+
+  .welcome-content > h2 { font-size: clamp(2rem,9vw,3rem); }
+
+  .welcome-description { margin: 14px auto 18px; }
+
+  .tree-card { grid-template-columns: 1fr; }
+  .tree-card img { height: 200px; }
+  .tree-card-content { padding: 14px 0 0; }
+
+  .main-credits {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .credit-item:first-child { grid-column: auto; }
+
+  .login-card { padding: 24px 19px; }
+  .section { padding: 46px 17px; }
+  .site-header { padding: 56px 18px; }
+  .poll-box { padding: 21px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TERMOS DE USO -->
+
+<section id="terms-screen" aria-labelledby="terms-title">
+  <div class="terms-card">
+
+    <header class="terms-head">
+      <h1 id="terms-title">Termos de uso e aviso legal</h1>
+      <p>Leia com atenção todo o texto abaixo antes de acessar o site
+         Árvores de Gabriel Monteiro.</p>
+    </header>
+
+    <div id="terms-body" class="terms-body" tabindex="0">
+
+      <h2>1. Sobre o projeto</h2>
+      <p>O site Árvores de Gabriel Monteiro é um projeto ambiental de caráter educativo, criado por Guilherme Kin Nose, com o objetivo de valorizar as árvores do município de Gabriel Monteiro e incentivar a preservação da natureza nos espaços da cidade e da escola. Todo o conteúdo é apresentado para fins informativos e educativos.</p>
+
+      <h2>2. Aceitação dos termos</h2>
+      <p>Ao acessar e utilizar este site, o visitante declara que leu, compreendeu e concorda integralmente com os presentes termos. Caso não concorde com qualquer ponto, deve deixar de utilizar o site imediatamente.</p>
+
+      <h2>3. Uso adequado</h2>
+      <p>O site deve ser utilizado com respeito e responsabilidade. Não é permitido alterar, adulterar ou tentar manipular o conteúdo, o código ou o funcionamento das páginas, nem contornar as telas de acesso, sobrecarregar o site ou utilizá-lo de qualquer forma que prejudique o projeto, a escola ou outras pessoas.</p>
+
+      <h2>4. Direitos autorais</h2>
+      <p>© 2026 Guilherme Kin Nose. Todos os direitos reservados. Os textos, a organização das informações, o visual e o conjunto do site são protegidos. É proibida a cópia, a reprodução, a distribuição ou a utilização, total ou parcial, de qualquer parte do site sem autorização prévia do autor, conforme a Lei nº 9.610/1998, que trata dos direitos autorais.</p>
+      <p>Algumas imagens e o vídeo exibido no topo da página pertencem aos seus respectivos autores e às plataformas de origem, e permanecem sujeitos às regras de cada uma delas.</p>
+
+      <h2>5. Monitoramento</h2>
+      <p>O acesso e o uso do site são monitorados por uma equipe de 5 pessoas responsáveis pelo projeto. O objetivo do monitoramento é garantir o bom funcionamento das páginas e a proteção do conteúdo.</p>
+
+      <h2>6. Descumprimento dos termos</h2>
+      <p>Qualquer alteração não autorizada, tentativa de interferência ou uso indevido será registrado e comunicado ao responsável pelo projeto, que poderá adotar as medidas cabíveis. Como já ocorreu com o QR Code do projeto, que foi desativado em razão de uso inadequado, o acesso a recursos do site poderá ser limitado ou desativado sempre que necessário.</p>
+
+      <h2>7. Informações digitadas e privacidade</h2>
+      <p>Os dados digitados na tela de acesso e as respostas da pesquisa não são enviados nem armazenados em nenhum servidor. Eles são usados apenas durante a navegação, no próprio navegador do visitante. Mesmo assim, recomendamos que não sejam informados dados pessoais sensíveis.</p>
+
+      <h2>8. Conteúdo informativo</h2>
+      <p>As informações sobre espécies e sobre a importância das árvores têm caráter geral e educativo. Elas não substituem a orientação de profissionais da área, como engenheiros agrônomos, biólogos e técnicos ambientais, especialmente em casos de plantio, poda ou remoção de árvores.</p>
+
+      <h2>9. Conteúdos externos</h2>
+      <p>Parte das imagens e o vídeo do site são carregados de serviços de terceiros. O projeto não controla a disponibilidade nem o conteúdo desses serviços, e eventuais falhas na exibição não geram responsabilidade para o autor.</p>
+
+      <h2>10. Alterações nos termos</h2>
+      <p>Estes termos podem ser atualizados a qualquer momento, sem aviso prévio. A continuidade do uso do site após uma atualização significa a concordância com a nova versão.</p>
+
+      <h2>11. Dúvidas</h2>
+      <p>Em caso de dúvidas sobre estes termos ou sobre o uso do site, entre em contato com o responsável pelo projeto pelo Discord.</p>
+      <p><a class="discord-link" href="https://discord.com/users/1572781104157425735" target="_blank" rel="noopener noreferrer">Falar no Discord</a></p>
+
+      <p class="terms-end"><strong>Fim do texto.</strong> Para continuar, marque as duas opções abaixo.</p>
+    </div>
+
+    <div class="terms-footer">
+      <p id="terms-hint" class="terms-hint" aria-live="polite">
+        Role o texto até o final para liberar as opções.
+      </p>
+
+      <label class="terms-check">
+        <input type="checkbox" id="terms-read" disabled>
+        <span>Li e compreendi todo o texto acima.</span>
+      </label>
+
+      <label class="terms-check">
+        <input type="checkbox" id="terms-agree" disabled>
+        <span>Concordo com os termos de uso e com as regras do site.</span>
+      </label>
+
+      <button type="button" id="terms-continue" class="terms-button" disabled>
+        Continuar para o acesso
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- TELA DE LOGIN -->
+
+<section id="login-screen" aria-label="Tela de acesso" inert>
+  <div class="login-card">
+
+    <div class="login-symbol" aria-hidden="true">🌿</div>
+    <p class="login-eyebrow">Projeto ambiental</p>
+
+    <h1>Árvores de Gabriel Monteiro</h1>
+
+    <p class="login-intro">
+      Seja bem-vindo! Preencha os campos abaixo para continuar
+      e conhecer o projeto.
+    </p>
+
+    <form id="login-form">
+      <div class="login-field">
+        <label for="login-user">Usuário ou e-mail</label>
+        <input
+          id="login-user"
+          name="username"
+          type="text"
+          placeholder="Digite seu usuário"
+          autocomplete="username"
+          required
+        >
+      </div>
+
+      <div class="login-field">
+        <label for="login-password">Senha</label>
+        <input
+          id="login-password"
+          name="password"
+          type="password"
+          placeholder="Digite sua senha"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <button class="login-button" type="submit">
+        Entrar no projeto →
+      </button>
+
+      <div id="login-error" class="login-error" role="alert">
+        Preencha o usuário e a senha para continuar.
+      </div>
+    </form>
+
+    <p class="login-note">
+      Um projeto de valorização das árvores e preservação da natureza.
+    </p>
+
+    <div class="login-legal">
+      <p>© 2026 Guilherme Kin Nose. Todos os direitos reservados.</p>
+      <p>
+        O conteúdo deste site é protegido. É proibida a cópia ou
+        reprodução, total ou parcial, sem autorização do autor.
+        O acesso é monitorado por uma equipe de 5 pessoas, e o uso
+        indevido será registrado e comunicado ao responsável pelo
+        projeto.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CRÉDITOS -->
+
+<section id="welcome-screen" class="welcome-hidden">
+  <div class="welcome-content">
+
+    <span class="welcome-label">
+      Natureza • Educação • Preservação
+    </span>
+
+    <h2>Uma cidade mais verde começa com a gente.</h2>
+
+    <p class="welcome-description">
+      Descubra a importância das árvores, conheça algumas espécies
+      e veja como a natureza faz parte do nosso dia a dia em
+      Gabriel Monteiro.
+    </p>
+
+    <div class="credits-panel">
+      <h3 class="credits-heading">Créditos do projeto</h3>
+
+      <div class="main-credits">
+
+        <div class="credit-item">
+          <span class="credit-role">Criação do site e QR Code</span>
+          <span class="credit-name">Guilherme Kin Nose</span>
+          <span class="credit-detail">
+            Aluno e responsável pelo desenvolvimento do site e do QR Code.
+          </span>
+        </div>
+
+        <div class="credit-item">
+          <span class="credit-role">Diretora da escola</span>
+          <span class="credit-name">Maria Elizabete Fernandes Oliveira</span>
+        </div>
+
+        <div class="credit-item">
+          <span class="credit-role">Coordenadora geral</span>
+          <span class="credit-name">Maristela Zupiroli Russo</span>
+        </div>
+
+        <div class="credit-item">
+          <span class="credit-role">Professora da sala AEE</span>
+          <span class="credit-name">Maria Neusa Bigaton</span>
+        </div>
+
+      </div>
+
+      <h3 class="special-heading">Participações especiais</h3>
+
+      <div class="special-people">
+        <span class="special-person">Kauanny</span>
+        <span class="special-person">Wechilley</span>
+        <span class="special-person">Kennedy</span>
+        <span class="special-person">Pietra</span>
+        <span class="special-person">Vitor</span>
+        <span class="special-person">Maria Vitória</span>
+        <span class="special-person">Gabi <small>(PA)</small></span>
+        <span class="special-person">Frederico <small>(PA)</small></span>
+        <span class="special-person">Rose <small>(PA)</small></span>
+        <span class="special-person">Gabriela <small>(PA)</small></span>
+        <span class="special-person">Elaine <small>(PA)</small></span>
+        <span class="special-person">Rafael <small>(PA)</small></span>
+        <span class="special-person">Aline <small>(PA)</small></span>
+        <span class="special-person">Ana Paula <small>(PA)</small></span>
+      </div>
+    </div>
+
+    <button id="continue-button" class="welcome-continue"
+            type="button" disabled>
+      Aguarde 10 segundos...
+    </button>
+
+    <p id="countdown-note" class="countdown-note" aria-live="polite">
+      Leia os créditos antes de continuar.
+    </p>
+
+  </div>
+</section>
+
+<!-- SITE PRINCIPAL -->
+
+<main id="main-site">
+
+  <header class="site-header">
+    <iframe
+      class="site-header-video"
+      src="https://www.youtube-nocookie.com/embed/7z4OAx7GJOY?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=7z4OAx7GJOY&amp;controls=0&amp;playsinline=1&amp;rel=0"
+      title="Vídeo de natureza ao fundo"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      referrerpolicy="strict-origin-when-cross-origin"
+      tabindex="-1"
+      aria-hidden="true">
+    </iframe>
+    <h1>Árvores de Gabriel Monteiro</h1>
+    <p>
+      Conhecer, valorizar e preservar as árvores é cuidar do nosso
+      ambiente, da nossa cidade e das próximas gerações.
+    </p>
+  </header>
+
+  <nav class="site-nav" aria-label="Navegação principal">
+    <a href="#inicio">Início</a>
+    <a href="#especies">Espécies</a>
+    <a href="#importancia">Importância</a>
+    <a href="#pesquisa">Pesquisa</a>
+    <a href="#sobre">Sobre o projeto</a>
+  </nav>
+
+  <section id="inicio" class="section">
+    <h2>Conheça nossas árvores 🌳</h2>
+
+    <p class="section-intro">
+      As árvores estão presentes em diferentes espaços da nossa
+      cidade. Elas ajudam a melhorar o ambiente, oferecem sombra
+      e contribuem para a qualidade de vida da população.
+      Conheça algumas categorias de árvores e descubra mais sobre
+      sua importância.
+    </p>
+
+    <div class="tree-grid">
+
+      <article class="tree-card">
+        <img
+          src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80"
+          alt="Palmeira ornamental" loading="lazy"
+        >
+        <div class="tree-card-content">
+          <h3>Palmeira-rabo-de-raposa</h3>
+          <p>
+            Uma palmeira ornamental conhecida por suas folhas
+            volumosas, que lembram uma cauda de raposa.
+          </p>
+          <button type="button" class="tree-detail-button"
+            data-title="Palmeira-rabo-de-raposa"
+            data-description="A palmeira-rabo-de-raposa é uma espécie ornamental muito utilizada em jardins e áreas abertas. Suas folhas são longas e volumosas. Como outras plantas, precisa de condições adequadas de solo, água e luz para se desenvolver.">
+            Saiba mais
+          </button>
+        </div>
+      </article>
+
+      <article class="tree-card">
+        <img
+          src="https://images.unsplash.com/photo-1512428813834-c702c7702b78?auto=format&fit=crop&w=800&q=80"
+          alt="Palmeira areca" loading="lazy"
+        >
+        <div class="tree-card-content">
+          <h3>Palmeira-areca</h3>
+          <p>
+            Uma planta ornamental de aparência leve, utilizada
+            para compor jardins e espaços verdes.
+          </p>
+          <button type="button" class="tree-detail-button"
+            data-title="Palmeira-areca"
+            data-description="A palmeira-areca é conhecida por formar conjuntos de caules e apresentar folhas verdes e arqueadas. É usada em projetos paisagísticos e precisa de cuidados de acordo com o clima e o local onde é cultivada.">
+            Saiba mais
+          </button>
+        </div>
+      </article>
+
+      <article class="tree-card">
+        <img
+          src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80"
+          alt="Planta ornamental verde" loading="lazy"
+        >
+        <div class="tree-card-content">
+          <h3>Palmeira-leque</h3>
+          <p>
+            Recebe esse nome por causa de suas folhas abertas
+            em formato semelhante a um leque.
+          </p>
+          <button type="button" class="tree-detail-button"
+            data-title="Palmeira-leque"
+            data-description="A palmeira-leque tem folhas largas que se abrem de maneira semelhante a um leque. É uma planta ornamental que pode contribuir para a composição visual de praças, jardins e outros espaços.">
+            Saiba mais
+          </button>
+        </div>
+      </article>
+
+      <article class="tree-card">
+        <img
+          src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80"
+          alt="Copa de árvores em uma área verde" loading="lazy"
+        >
+        <div class="tree-card-content">
+          <h3>Árvores de copa ampla</h3>
+          <p>
+            Suas copas podem oferecer sombra e tornar os espaços
+            externos mais agradáveis.
+          </p>
+          <button type="button" class="tree-detail-button"
+            data-title="Árvores de copa ampla"
+            data-description="Árvores com copas amplas podem ajudar a reduzir a incidência direta do sol sobre calçadas e áreas abertas. A escolha da espécie deve considerar o espaço disponível, as raízes e a infraestrutura próxima.">
+            Saiba mais
+          </button>
+        </div>
+      </article>
+
+      <article class="tree-card">
+        <img
+          src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?auto=format&fit=crop&w=800&q=80"
+          alt="Frutas" loading="lazy"
+        >
+        <div class="tree-card-content">
+          <h3>Árvores frutíferas</h3>
+          <p>
+            Podem fornecer frutos, atrair animais e contribuir
+            para a diversidade dos espaços verdes.
+          </p>
+          <button type="button" class="tree-detail-button"
+            data-title="Árvores frutíferas"
+            data-description="Árvores frutíferas produzem alimentos e podem oferecer recursos para aves e outros animais. Cada espécie possui necessidades específicas de clima, espaço e manutenção.">
+            Saiba mais
+          </button>
+        </div>
+      </article>
+
+      <article class="tree-card">
+        <img
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"
+          alt="Área verde" loading="lazy"
+        >
+        <div class="tree-card-content">
+          <h3>Árvores na escola</h3>
+          <p>
+            A vegetação no ambiente escolar pode tornar os
+            espaços mais agradáveis e ajudar na educação ambiental.
+          </p>
+          <button type="button" class="tree-detail-button"
+            data-title="Árvores na escola"
+            data-description="As árvores presentes nas escolas podem proporcionar sombra, favorecer o contato dos alunos com a natureza e servir como ponto de partida para atividades de educação ambiental e preservação.">
+            Saiba mais
+          </button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <div class="soft-section">
+    <section id="especies" class="section">
+      <h2>Por que preservar as árvores?</h2>
+
+      <p class="section-intro">
+        Preservar a vegetação é uma forma de cuidar do ambiente
+        em que vivemos. A presença de árvores pode trazer
+        benefícios para as pessoas, os animais e o solo.
+      </p>
+
+      <div class="info-grid">
+        <article class="info-box">
+          <strong>🌤️ Sombra e conforto</strong>
+          <p>
+            As copas ajudam a bloquear parte da luz solar direta
+            e podem tornar os espaços mais agradáveis.
+          </p>
+        </article>
+
+        <article class="info-box">
+          <strong>🐦 Abrigo para animais</strong>
+          <p>
+            Árvores podem servir de abrigo e oferecer alimento
+            para diferentes espécies de animais.
+          </p>
+        </article>
+
+        <article class="info-box">
+          <strong>🌱 Proteção do ambiente</strong>
+          <p>
+            A vegetação ajuda a proteger o solo e participa
+            dos ciclos naturais da água e do carbono.
+          </p>
+        </article>
+
+        <article class="info-box">
+          <strong>🌳 Qualidade de vida</strong>
+          <p>
+            Áreas arborizadas podem deixar ruas, praças e escolas
+            mais acolhedoras para a comunidade.
+          </p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <section id="importancia" class="section">
+    <h2>A natureza faz parte da nossa vida</h2>
+
+    <p class="section-intro">
+      Cuidar das árvores não significa apenas plantar novas mudas.
+      Também é importante proteger as árvores existentes, evitar
+      danos e manter os espaços verdes limpos.
+    </p>
+
+    <div class="video-placeholder">
+      <p>
+        🌿 <strong>Preservar hoje é cuidar do amanhã.</strong><br>
+        Cada atitude responsável pode contribuir para um ambiente
+        mais saudável em Gabriel Monteiro.
+      </p>
+    </div>
+  </section>
+
+  <div class="soft-section">
+    <section id="pesquisa" class="section">
+      <h2>Vamos participar? 🌳</h2>
+
+      <p class="section-intro">
+        Na sua opinião, quantas árvores existem nos espaços
+        considerados nesta pesquisa? Escolha uma alternativa
+        para registrar sua resposta.
+      </p>
+
+      <div class="poll-box">
+        <h3>Qual é a sua estimativa?</h3>
+
+        <div id="poll-options" class="poll-options">
+          <button type="button" data-answer="500+">
+            Mais de 500 árvores
+          </button>
+          <button type="button" data-answer="1500+">
+            Mais de 1.500 árvores
+          </button>
+          <button type="button" data-answer="4000+">
+            Mais de 4.000 árvores
+          </button>
+        </div>
+
+        <div id="poll-thanks" role="status" aria-live="polite">
+          Obrigado por participar! 🌱
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section id="sobre" class="section">
+    <h2>Sobre o projeto</h2>
+
+    <p class="section-intro">
+      Este projeto tem como objetivo valorizar as árvores de
+      Gabriel Monteiro e destacar a importância da preservação
+      ambiental nos espaços da cidade e da escola.
+    </p>
+
+    <div class="info-grid">
+      <article class="info-box">
+        <strong>🌿 Objetivo</strong>
+        <p>
+          Incentivar a conscientização sobre as árvores e sua
+          importância para o meio ambiente.
+        </p>
+      </article>
+
+      <article class="info-box">
+        <strong>📍 Localidade</strong>
+        <p>Gabriel Monteiro, São Paulo.</p>
+      </article>
+
+      <article class="info-box">
+        <strong>📷 Registro</strong>
+        <p>
+          As fotografias e informações ajudam a comunidade
+          a conhecer melhor a vegetação presente nos espaços locais.
+        </p>
+      </article>
+    </div>
+
+    <h2 style="margin-top:45px;">Sobre o QR Code</h2>
+
+    <div class="qr-notice">
+      O QR Code foi desativado pelo responsável pelo projeto em razão de uso inadequado.
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p><strong>Árvores de Gabriel Monteiro</strong></p>
+    <p>Um projeto de conscientização e valorização da natureza.</p>
+    <p>Criado com dedicação por <strong>Guilherme Kin Nose</strong> para valorizar as árvores de Gabriel Monteiro.</p>
+    <p>© 2026 Guilherme Kin Nose. Todos os direitos reservados.</p>
+    <p><a class="discord-link" href="https://discord.com/users/1572781104157425735" target="_blank" rel="noopener noreferrer">Contato: Falar no Discord</a></p>
+  </footer>
+
+</main>
+
+<!-- MODAL DE DETALHES -->
+
+<div id="tree-modal" class="tree-modal"
+     role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-content">
+    <button type="button" id="modal-close" class="modal-close"
+            aria-label="Fechar">×</button>
+    <h2 id="modal-title">Sobre a árvore</h2>
+    <p id="modal-description"></p>
+  </div>
+</div>
+
+<script>
+/* LOGIN E TRANSIÇÕES */
+
+const loginForm = document.getElementById("login-form");
+const loginScreen = document.getElementById("login-screen");
+const loginUser = document.getElementById("login-user");
+const loginPassword = document.getElementById("login-password");
+const loginError = document.getElementById("login-error");
+
+const welcomeScreen = document.getElementById("welcome-screen");
+const continueButton = document.getElementById("continue-button");
+const countdownNote = document.getElementById("countdown-note");
+const mainSite = document.getElementById("main-site");
+
+let countdownInterval = null;
+let loginStarted = false;
+let siteOpened = false;
+
+loginForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  if (loginStarted) return;
+
+  const username = loginUser.value.trim();
+  const password = loginPassword.value.trim();
+
+  if (!username || !password) {
+    loginError.textContent =
+      "Preencha o usuário e a senha para continuar.";
+    loginError.classList.add("show");
+    return;
+  }
+
+  loginStarted = true;
+  loginError.classList.remove("show");
+
+  const loginButton = loginForm.querySelector("button");
+  loginButton.disabled = true;
+  loginButton.textContent = "Preparando sua experiência...";
+
+  mainSite.classList.remove("site-ready");
+  loginScreen.classList.add("login-leaving");
+
+  setTimeout(function() {
+    loginScreen.classList.add("login-hidden");
+    welcomeScreen.classList.remove("welcome-hidden");
+    welcomeScreen.classList.add("welcome-visible");
+    startCountdown();
+  }, 850);
+});
+
+loginUser.addEventListener("input", clearLoginError);
+loginPassword.addEventListener("input", clearLoginError);
+
+function clearLoginError() {
+  loginError.classList.remove("show");
+}
+
+/* CONTAGEM DE 10 SEGUNDOS */
+
+function startCountdown() {
+  let secondsLeft = 10;
+
+  continueButton.disabled = true;
+  continueButton.textContent = "Aguarde 10 segundos...";
+  countdownNote.textContent = "Leia os créditos antes de continuar.";
+
+  if (countdownInterval !== null) {
+    clearInterval(countdownInterval);
+  }
+
+  countdownInterval = setInterval(function() {
+    secondsLeft--;
+
+    if (secondsLeft > 0) {
+      continueButton.textContent =
+        "Aguarde " + secondsLeft +
+        " segundo" + (secondsLeft === 1 ? "" : "s") + "...";
+    } else {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      continueButton.disabled = false;
+      continueButton.textContent = "Conhecer o projeto →";
+      countdownNote.textContent =
+        "Tudo pronto! Você já pode continuar.";
+    }
+  }, 1000);
+}
+
+/* ENTRADA NO SITE */
+
+continueButton.addEventListener("click", function() {
+  if (continueButton.disabled || siteOpened) return;
+
+  siteOpened = true;
+  continueButton.disabled = true;
+
+  welcomeScreen.classList.remove("welcome-visible");
+  welcomeScreen.classList.add("welcome-hidden");
+
+  setTimeout(function() {
+    mainSite.classList.add("site-ready");
+
+    setTimeout(function() {
+      document.getElementById("inicio").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }, 100);
+  }, 800);
+});
+
+/* DETALHES DAS ÁRVORES */
+
+const treeModal = document.getElementById("tree-modal");
+const modalTitle = document.getElementById("modal-title");
+const modalDescription = document.getElementById("modal-description");
+const modalClose = document.getElementById("modal-close");
+
+document.querySelectorAll(".tree-detail-button").forEach(function(button) {
+  button.addEventListener("click", function() {
+    modalTitle.textContent = button.dataset.title;
+    modalDescription.textContent = button.dataset.description;
+    treeModal.classList.add("open");
+    modalClose.focus();
+  });
+});
+
+function closeTreeModal() {
+  treeModal.classList.remove("open");
+}
+
+modalClose.addEventListener("click", closeTreeModal);
+
+treeModal.addEventListener("click", function(event) {
+  if (event.target === treeModal) closeTreeModal();
+});
+
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") closeTreeModal();
+});
+
+/* PESQUISA */
+
+const pollOptions = document.getElementById("poll-options");
+const pollThanks = document.getElementById("poll-thanks");
+
+pollOptions.querySelectorAll("button").forEach(function(button) {
+  button.addEventListener("click", function() {
+    const answer = button.dataset.answer;
+
+    pollOptions.style.display = "none";
+    pollThanks.style.display = "block";
+    pollThanks.textContent =
+      "Obrigado por participar! 🌱 Sua opção foi: " + answer;
+  });
+});
+
+/* TERMOS DE USO */
+
+const termsScreen = document.getElementById("terms-screen");
+const termsBody = document.getElementById("terms-body");
+const termsHint = document.getElementById("terms-hint");
+const termsRead = document.getElementById("terms-read");
+const termsAgree = document.getElementById("terms-agree");
+const termsContinue = document.getElementById("terms-continue");
+
+let termsReachedEnd = false;
+let termsLeft = false;
+
+function updateTerms() {
+  const atEnd =
+    termsBody.scrollTop + termsBody.clientHeight >=
+    termsBody.scrollHeight - 12;
+
+  if (atEnd && !termsReachedEnd) {
+    termsReachedEnd = true;
+    termsRead.disabled = false;
+    termsAgree.disabled = false;
+    termsHint.textContent = "Texto lido até o final. Marque as duas opções para continuar.";
+    termsHint.classList.add("ready");
+  }
+
+  termsContinue.disabled =
+    !(termsReachedEnd && termsRead.checked && termsAgree.checked);
+}
+
+termsBody.addEventListener("scroll", updateTerms);
+termsRead.addEventListener("change", updateTerms);
+termsAgree.addEventListener("change", updateTerms);
+window.addEventListener("resize", updateTerms);
+
+termsContinue.addEventListener("click", function() {
+  if (termsContinue.disabled || termsLeft) return;
+  termsLeft = true;
+
+  termsScreen.classList.add("terms-leaving");
+  loginScreen.removeAttribute("inert");
+
+  setTimeout(function() {
+    termsScreen.classList.add("terms-hidden");
+    loginUser.focus();
+  }, 700);
+});
+
+updateTerms();
+</script>
+
+</body>
+</html>
